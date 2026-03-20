@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>QuickQuote — Professional Invoices & Quotes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FAF8F4;
+    --ink: #1A1916;
+    --ink-mid: #4A4845;
+    --ink-light: #9A9895;
+    --border: #E2DDD8;
+    --accent: #1D6B4A;
+    --accent-light: #E8F5EE;
+    --accent-mid: #2A8A5E;
+    --danger: #C0392B;
+    --surface: #FFFFFF;
+    --surface2: #F5F2EE;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+    --radius: 10px;
+    --serif: 'DM Serif Display', serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--ink);
+    color: white;
+    padding: 0 2rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { font-family: var(--serif); font-size: 22px; letter-spacing: -0.3px; }
+  .logo span { color: #5DCAA5; }
+  .nav-actions { display: flex; gap: 10px; align-items: center; }
+  .btn { font-family: var(--sans); cursor: pointer; border: none; border-radius: 7px; font-size: 14px; font-weight: 500; transition: all 0.15s; padding: 8px 18px; }
+  .btn-ghost { background: rgba(255,255,255,0.1); color: white; }
+  .btn-ghost:hover { background: rgba(255,255,255,0.18); }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: var(--accent-mid); }
+  .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 5px 10px; font-size: 12px; }
+  .btn-danger:hover { background: #FEF2F2; }
+  .btn-outline { background: white; color: var(--ink); border: 1px solid var(--border); }
+  .btn-outline:hover { border-color: var(--ink-mid); }
+
+  /* LAYOUT */
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .two-col { display: grid; grid-template-columns: 1fr 380px; gap: 2rem; align-items: start; }
+  @media (max-width: 820px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* CARD */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; box-shadow: var(--shadow); }
+  .card + .card { margin-top: 1.25rem; }
+  .card-title { font-family: var(--serif); font-size: 18px; margin-bottom: 1.25rem; color: var(--ink); }
+
+  /* FORM ELEMENTS */
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: 5px; }
+  .field input, .field select, .field textarea {
+    width: 100%; font-family: var(--sans); font-size: 14px; color: var(--ink);
+    background: var(--cream); border: 1px solid var(--border); border-radius: 7px;
+    padding: 9px 12px; transition: border-color 0.15s;
+    outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); background: white; }
+  .field textarea { resize: vertical; min-height: 80px; }
+  .two-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .three-fields { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; }
+
+  /* BADGE */
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .badge-quote { background: #EEF2FF; color: #3730A3; }
+  .badge-invoice { background: var(--accent-light); color: var(--accent); }
+
+  /* LINE ITEMS */
+  .items-header { display: grid; grid-template-columns: 2fr 1fr 1fr 36px; gap: 10px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-light); padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+  .line-item { display: grid; grid-template-columns: 2fr 1fr 1fr 36px; gap: 10px; align-items: center; margin-bottom: 8px; }
+  .line-item input { font-size: 14px; }
+  .remove-btn { width: 30px; height: 30px; border: none; background: none; color: var(--ink-light); cursor: pointer; font-size: 18px; border-radius: 5px; display: flex; align-items: center; justify-content: center; transition: all 0.1s; }
+  .remove-btn:hover { background: #FEE2E2; color: var(--danger); }
+  .add-item-btn { display: flex; align-items: center; gap: 6px; background: none; border: 1.5px dashed var(--border); color: var(--ink-light); font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; padding: 8px 14px; border-radius: 7px; width: 100%; justify-content: center; margin-top: 10px; transition: all 0.15s; }
+  .add-item-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+  /* TOTALS */
+  .totals { background: var(--surface2); border-radius: 8px; padding: 1rem 1.25rem; margin-top: 1rem; }
+  .totals-row { display: flex; justify-content: space-between; font-size: 14px; padding: 4px 0; color: var(--ink-mid); }
+  .totals-row.total { font-size: 17px; font-weight: 600; color: var(--ink); border-top: 1px solid var(--border); margin-top: 8px; padding-top: 12px; }
+  .totals-row.total span:last-child { font-family: var(--serif); font-size: 20px; }
+
+  /* PREVIEW PANEL */
+  .preview-sticky { position: sticky; top: 72px; }
+  .preview-doc { background: white; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .preview-header { background: var(--ink); color: white; padding: 1.5rem; }
+  .preview-logo { font-family: var(--serif); font-size: 20px; margin-bottom: 0.25rem; }
+  .preview-tagline { font-size: 12px; opacity: 0.5; }
+  .preview-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1.25rem; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 12px; }
+  .preview-meta-block p:first-child { font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: 3px; }
+  .preview-meta-block p { color: var(--ink-mid); }
+  .preview-body { padding: 1.25rem; }
+  .preview-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .preview-table th { text-align: left; font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-light); padding: 0 6px 8px; border-bottom: 1px solid var(--border); }
+  .preview-table th:last-child, .preview-table td:last-child { text-align: right; }
+  .preview-table td { padding: 7px 6px; color: var(--ink-mid); border-bottom: 1px solid var(--surface2); }
+  .preview-totals { margin-top: 1rem; }
+  .preview-total-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-mid); padding: 3px 0; }
+  .preview-total-row.final { font-weight: 600; font-size: 15px; color: var(--ink); border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px; }
+  .preview-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--border); font-size: 11px; color: var(--ink-light); }
+  .preview-actions { display: flex; gap: 8px; padding: 1rem 1.25rem; border-top: 1px solid var(--border); }
+  .preview-actions .btn { flex: 1; text-align: center; font-size: 13px; }
+
+  /* TYPE TOGGLE */
+  .type-toggle { display: flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 3px; margin-bottom: 1.5rem; }
+  .type-btn { flex: 1; padding: 7px; border: none; background: none; font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; border-radius: 6px; color: var(--ink-mid); transition: all 0.15s; }
+  .type-btn.active { background: white; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+  /* HERO */
+  .hero { text-align: center; padding: 3rem 1rem 2rem; }
+  .hero h1 { font-family: var(--serif); font-size: clamp(32px, 5vw, 52px); color: var(--ink); line-height: 1.15; margin-bottom: 0.75rem; }
+  .hero p { color: var(--ink-mid); font-size: 16px; max-width: 520px; margin: 0 auto 2rem; }
+  .hero-badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 2.5rem; }
+  .hero-badge { font-size: 12px; font-weight: 500; color: var(--ink-mid); background: white; border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; }
+
+  /* PRINT / PDF styles */
+  @media print {
+    nav, .form-col, .preview-actions, .hero { display: none !important; }
+    body { background: white; }
+    .two-col { display: block; }
+    .preview-sticky { position: static; }
+    .preview-doc { border: none; box-shadow: none; }
+    .container { padding: 0; max-width: 100%; }
+  }
+
+  .section-divider { height: 1px; background: var(--border); margin: 2rem 0; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Quick<span>Quote</span></div>
+  <div class="nav-actions">
+    <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    <button class="btn btn-primary" onclick="printDoc()">Export PDF</button>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <h1>Professional quotes &<br/>invoices in seconds</h1>
+    <p>Fill in your details below and get a beautiful, print-ready document instantly — no sign-up needed.</p>
+    <div class="hero-badges">
+      <span class="hero-badge">✓ Free to use</span>
+      <span class="hero-badge">✓ Instant PDF export</span>
+      <span class="hero-badge">✓ Looks professional</span>
+      <span class="hero-badge">✓ No account needed</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <!-- FORM COLUMN -->
+    <div class="form-col">
+
+      <!-- Doc type -->
+      <div class="card">
+        <div class="type-toggle">
+          <button class="type-btn active" id="toggle-quote" onclick="setType('quote')">Quote / Estimate</button>
+          <button class="type-btn" id="toggle-invoice" onclick="setType('invoice')">Invoice</button>
+        </div>
+
+        <div class="two-fields">
+          <div class="field">
+            <label>Document Number</label>
+            <input type="text" id="doc-number" value="001" oninput="updatePreview()" />
+          </div>
+          <div class="field">
+            <label id="date-label">Quote Date</label>
+            <input type="date" id="doc-date" oninput="updatePreview()" />
+          </div>
+        </div>
+        <div class="field" id="due-date-field">
+          <label>Payment Due Date</label>
+          <input type="date" id="due-date" oninput="updatePreview()" />
+        </div>
+      </div>
+
+      <!-- Your business -->
+      <div class="card">
+        <div class="card-title">Your Business</div>
+        <div class="field">
+          <label>Business Name</label>
+          <input type="text" id="biz-name" placeholder="Acme Services LLC" oninput="updatePreview()" />
+        </div>
+        <div class="two-fields">
+          <div class="field">
+            <label>Email</label>
+            <input type="email" id="biz-email" placeholder="you@yourcompany.com" oninput="updatePreview()" />
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input type="tel" id="biz-phone" placeholder="+1 (555) 000-0000" oninput="updatePreview()" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Address</label>
+          <input type="text" id="biz-address" placeholder="123 Main St, City, State ZIP" oninput="updatePreview()" />
+        </div>
+      </div>
+
+      <!-- Client -->
+      <div class="card">
+        <div class="card-title">Client Details</div>
+        <div class="field">
+          <label>Client Name / Company</label>
+          <input type="text" id="client-name" placeholder="Jane Smith / Acme Corp" oninput="updatePreview()" />
+        </div>
+        <div class="field">
+          <label>Client Email</label>
+          <input type="email" id="client-email" placeholder="client@email.com" oninput="updatePreview()" />
+        </div>
+        <div class="field">
+          <label>Client Address</label>
+          <input type="text" id="client-address" placeholder="456 Oak Ave, City, State ZIP" oninput="updatePreview()" />
+        </div>
+      </div>
+
+      <!-- Line items -->
+      <div class="card">
+        <div class="card-title">Line Items</div>
+        <div class="items-header">
+          <span>Description</span>
+          <span>Qty</span>
+          <span>Price</span>
+          <span></span>
+        </div>
+        <div id="line-items"></div>
+        <button class="add-item-btn" onclick="addItem()">+ Add line item</button>
+
+        <div class="totals">
+          <div class="totals-row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+          <div class="totals-row" id="tax-row">
+            <span>Tax (<input type="number" id="tax-rate" value="0" min="0" max="100" step="0.5" style="width:44px;padding:1px 5px;font-size:13px;border-radius:4px;border:1px solid var(--border);" oninput="updatePreview()" />%)</span>
+            <span id="tax-amount">$0.00</span>
+          </div>
+          <div class="totals-row" id="discount-row">
+            <span>Discount (<input type="number" id="disc-rate" value="0" min="0" max="100" step="1" style="width:44px;padding:1px 5px;font-size:13px;border-radius:4px;border:1px solid var(--border);" oninput="updatePreview()" />%)</span>
+            <span id="disc-amount">-$0.00</span>
+          </div>
+          <div class="totals-row total"><span>Total Due</span><span id="total">$0.00</span></div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="card">
+        <div class="card-title">Notes & Terms</div>
+        <div class="field">
+          <label>Notes to Client</label>
+          <textarea id="notes" placeholder="Thank you for your business! Payment via bank transfer, PayPal, or check." oninput="updatePreview()"></textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PREVIEW COLUMN -->
+    <div class="preview-sticky">
+      <p style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink-light);margin-bottom:10px;">Live Preview</p>
+      <div class="preview-doc" id="preview-doc">
+
+        <div class="preview-header">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div class="preview-logo" id="prev-biz-name">Your Business</div>
+              <div class="preview-tagline" id="prev-biz-contact"></div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:20px;font-family:'DM Serif Display',serif;letter-spacing:-0.3px;" id="prev-doc-type">QUOTE</div>
+              <div style="font-size:12px;opacity:0.6;" id="prev-doc-num">#001</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-meta">
+          <div class="preview-meta-block">
+            <p>Billed To</p>
+            <p id="prev-client-name">—</p>
+            <p id="prev-client-email"></p>
+            <p id="prev-client-addr"></p>
+          </div>
+          <div class="preview-meta-block" style="text-align:right;">
+            <p id="prev-date-label">Quote Date</p>
+            <p id="prev-date">—</p>
+            <p id="prev-due-label" style="margin-top:8px;"></p>
+            <p id="prev-due"></p>
+          </div>
+        </div>
+
+        <div class="preview-body">
+          <table class="preview-table">
+            <thead>
+              <tr>
+                <th style="width:50%">Description</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody id="prev-items">
+              <tr><td colspan="4" style="color:var(--ink-light);text-align:center;padding:16px 0;font-size:12px;">Add line items to get started</td></tr>
+            </tbody>
+          </table>
+
+          <div class="preview-totals">
+            <div class="preview-total-row"><span>Subtotal</span><span id="prev-subtotal">$0.00</span></div>
+            <div class="preview-total-row" id="prev-tax-row"><span id="prev-tax-label">Tax (0%)</span><span id="prev-tax">$0.00</span></div>
+            <div class="preview-total-row" id="prev-disc-row"><span id="prev-disc-label">Discount (0%)</span><span id="prev-disc">-$0.00</span></div>
+            <div class="preview-total-row final"><span>Total</span><span id="prev-total">$0.00</span></div>
+          </div>
+
+          <div id="prev-notes" style="margin-top:1rem;font-size:11px;color:var(--ink-light);border-top:1px solid var(--border);padding-top:10px;"></div>
+        </div>
+
+        <div class="preview-footer" id="prev-footer">
+          Generated with QuickQuote · quickquote.app
+        </div>
+
+        <div class="preview-actions">
+          <button class="btn btn-outline" onclick="copyLink()" style="font-size:13px;">Copy Link</button>
+          <button class="btn btn-primary" onclick="printDoc()" style="font-size:13px;flex:2;">Export PDF</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let docType = 'quote';
+let items = [];
+let itemId = 0;
+
+function setType(type) {
+  docType = type;
+  document.getElementById('toggle-quote').classList.toggle('active', type === 'quote');
+  document.getElementById('toggle-invoice').classList.toggle('active', type === 'invoice');
+  document.getElementById('date-label').textContent = type === 'quote' ? 'Quote Date' : 'Invoice Date';
+  document.getElementById('due-date-field').style.display = type === 'invoice' ? 'block' : 'none';
+  updatePreview();
+}
+
+function addItem(desc='', qty=1, price=0) {
+  const id = ++itemId;
+  items.push({ id, desc, qty, price });
+  renderItems();
+  updatePreview();
+}
+
+function removeItem(id) {
+  items = items.filter(i => i.id !== id);
+  renderItems();
+  updatePreview();
+}
+
+function renderItems() {
+  const container = document.getElementById('line-items');
+  container.innerHTML = '';
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'line-item';
+    div.innerHTML = `
+      <input type="text" placeholder="Description of service or product" value="${item.desc}" oninput="updateItem(${item.id},'desc',this.value)" />
+      <input type="number" min="1" value="${item.qty}" oninput="updateItem(${item.id},'qty',this.value)" />
+      <input type="number" min="0" step="0.01" placeholder="0.00" value="${item.price || ''}" oninput="updateItem(${item.id},'price',this.value)" />
+      <button class="remove-btn" onclick="removeItem(${item.id})">×</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function updateItem(id, field, value) {
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+  if (field === 'qty' || field === 'price') item[field] = parseFloat(value) || 0;
+  else item[field] = value;
+  updatePreview();
+}
+
+function fmt(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function fmtDate(d) { if (!d) return '—'; const [y,m,day] = d.split('-'); return `${m}/${day}/${y}`; }
+
+function updatePreview() {
+  const subtotal = items.reduce((s, i) => s + (i.qty * i.price), 0);
+  const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
+  const discRate = parseFloat(document.getElementById('disc-rate').value) || 0;
+  const taxAmt = subtotal * taxRate / 100;
+  const discAmt = subtotal * discRate / 100;
+  const total = subtotal + taxAmt - discAmt;
+
+  document.getElementById('subtotal').textContent = fmt(subtotal);
+  document.getElementById('tax-amount').textContent = fmt(taxAmt);
+  document.getElementById('disc-amount').textContent = '-' + fmt(discAmt);
+  document.getElementById('total').textContent = fmt(total);
+
+  const bizName = document.getElementById('biz-name').value || 'Your Business';
+  const bizEmail = document.getElementById('biz-email').value;
+  const bizPhone = document.getElementById('biz-phone').value;
+  const bizAddr = document.getElementById('biz-address').value;
+  const clientName = document.getElementById('client-name').value;
+  const clientEmail = document.getElementById('client-email').value;
+  const clientAddr = document.getElementById('client-address').value;
+  const docNum = document.getElementById('doc-number').value || '001';
+  const docDate = document.getElementById('doc-date').value;
+  const dueDate = document.getElementById('due-date').value;
+  const notes = document.getElementById('notes').value;
+
+  document.getElementById('prev-biz-name').textContent = bizName;
+  const contact = [bizEmail, bizPhone, bizAddr].filter(Boolean).join(' · ');
+  document.getElementById('prev-biz-contact').textContent = contact;
+  document.getElementById('prev-doc-type').textContent = docType.toUpperCase();
+  document.getElementById('prev-doc-num').textContent = '#' + docNum;
+  document.getElementById('prev-client-name').textContent = clientName || '—';
+  document.getElementById('prev-client-email').textContent = clientEmail;
+  document.getElementById('prev-client-addr').textContent = clientAddr;
+  document.getElementById('prev-date-label').textContent = docType === 'quote' ? 'Quote Date' : 'Invoice Date';
+  document.getElementById('prev-date').textContent = fmtDate(docDate);
+  document.getElementById('prev-due-label').textContent = docType === 'invoice' ? 'Due Date' : '';
+  document.getElementById('prev-due').textContent = docType === 'invoice' ? fmtDate(dueDate) : '';
+
+  const tbody = document.getElementById('prev-items');
+  if (items.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--ink-light);text-align:center;padding:16px 0;font-size:12px;">Add line items to get started</td></tr>';
+  } else {
+    tbody.innerHTML = items.map(i => `
+      <tr>
+        <td>${i.desc || '—'}</td>
+        <td>${i.qty}</td>
+        <td>${fmt(i.price)}</td>
+        <td>${fmt(i.qty * i.price)}</td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('prev-subtotal').textContent = fmt(subtotal);
+  document.getElementById('prev-tax-label').textContent = `Tax (${taxRate}%)`;
+  document.getElementById('prev-tax').textContent = fmt(taxAmt);
+  document.getElementById('prev-disc-label').textContent = `Discount (${discRate}%)`;
+  document.getElementById('prev-disc').textContent = '-' + fmt(discAmt);
+  document.getElementById('prev-total').textContent = fmt(total);
+  document.getElementById('prev-tax-row').style.opacity = taxRate > 0 ? '1' : '0.4';
+  document.getElementById('prev-disc-row').style.opacity = discRate > 0 ? '1' : '0.4';
+  document.getElementById('prev-notes').textContent = notes;
+}
+
+function printDoc() {
+  window.print();
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy Link', 2000);
+  });
+}
+
+function clearAll() {
+  if (!confirm('Clear all fields and start over?')) return;
+  document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], textarea').forEach(el => el.value = '');
+  document.getElementById('doc-number').value = '001';
+  document.getElementById('tax-rate').value = '0';
+  document.getElementById('disc-rate').value = '0';
+  items = []; itemId = 0;
+  renderItems();
+  updatePreview();
+}
+
+// Init
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('doc-date').value = today;
+const due = new Date(); due.setDate(due.getDate() + 30);
+document.getElementById('due-date').value = due.toISOString().split('T')[0];
+document.getElementById('due-date-field').style.display = 'none';
+addItem('', 1, 0);
+updatePreview();
+</script>
+</body>
+</html>
