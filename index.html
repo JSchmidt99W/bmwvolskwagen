@@ -149,6 +149,8 @@
   }
 
   .section-divider { height: 1px; background: var(--border); margin: 2rem 0; }
+  .kofi-btn { display: inline-flex; align-items: center; gap: 7px; background: #FF5E5B; color: white; font-family: var(--sans); font-size: 13px; font-weight: 600; border: none; border-radius: 7px; padding: 7px 14px; cursor: pointer; text-decoration: none; transition: opacity 0.15s; }
+  .kofi-btn:hover { opacity: 0.88; }
 </style>
 </head>
 <body>
@@ -156,6 +158,7 @@
 <nav>
   <div class="logo">Quick<span>Quote</span></div>
   <div class="nav-actions">
+    <a class="kofi-btn" href="https://ko-fi.com/jschm" target="_blank">☕ Buy me a coffee</a>
     <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
     <button class="btn btn-primary" onclick="printDoc()">Export PDF</button>
   </div>
@@ -333,10 +336,6 @@
           </div>
 
           <div id="prev-notes" style="margin-top:1rem;font-size:11px;color:var(--ink-light);border-top:1px solid var(--border);padding-top:10px;"></div>
-        </div>
-
-        <div class="preview-footer" id="prev-footer">
-          Generated with QuickQuote · quickquote.app
         </div>
 
         <div class="preview-actions">
