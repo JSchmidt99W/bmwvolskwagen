@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>QuickQuote — Professional Invoices & Quotes</title>
+<title>Invoice Quote — Professional Invoices & Quotes</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -140,7 +140,7 @@
 
   /* PRINT / PDF styles */
   @media print {
-    nav, .form-col, .preview-actions, .hero { display: none !important; }
+    nav, .form-col, .preview-actions, .hero, .preview-footer { display: none !important; }
     body { background: white; }
     .two-col { display: block; }
     .preview-sticky { position: static; }
@@ -154,7 +154,7 @@
 <body>
 
 <nav>
-  <div class="logo">Quick<span>Quote</span></div>
+  <div class="logo">Invoice<span>Quote</span></div>
   <div class="nav-actions">
     <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
     <button class="btn btn-primary" onclick="printDoc()">Export PDF</button>
@@ -190,13 +190,39 @@
             <input type="text" id="doc-number" value="001" oninput="updatePreview()" />
           </div>
           <div class="field">
+            <label>Currency</label>
+            <select id="currency" oninput="updatePreview()">
+              <option value="$">USD ($)</option>
+              <option value="€">EUR (€)</option>
+              <option value="£">GBP (£)</option>
+              <option value="¥">JPY (¥)</option>
+              <option value="₹">INR (₹)</option>
+              <option value="A$">AUD (A$)</option>
+              <option value="C$">CAD (C$)</option>
+              <option value="CHF">CHF (CHF)</option>
+              <option value="₽">RUB (₽)</option>
+              <option value="¢">PHP (¢)</option>
+              <option value="฿">THB (฿)</option>
+              <option value="₩">KRW (₩)</option>
+              <option value="R$">BRL (R$)</option>
+              <option value="₴">UAH (₴)</option>
+              <option value="zł">PLN (zł)</option>
+              <option value="₪">ILS (₪)</option>
+              <option value="R">ZAR (R)</option>
+            </select>
+          </div>
+        </div>
+        <div class="two-fields">
+          <div class="field">
             <label id="date-label">Quote Date</label>
             <input type="date" id="doc-date" oninput="updatePreview()" />
           </div>
+          <div class="field">
+            <label>Payment Due Date</label>
+            <input type="date" id="due-date" oninput="updatePreview()" />
+          </div>
         </div>
-        <div class="field" id="due-date-field">
-          <label>Payment Due Date</label>
-          <input type="date" id="due-date" oninput="updatePreview()" />
+        <div class="field" id="due-date-field" style="display:none;">
         </div>
       </div>
 
@@ -396,7 +422,7 @@ function updateItem(id, field, value) {
   updatePreview();
 }
 
-function fmt(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function fmt(n) { const currency = document.getElementById('currency').value; return currency + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
 function fmtDate(d) { if (!d) return '—'; const [y,m,day] = d.split('-'); return `${m}/${day}/${y}`; }
 
 function updatePreview() {
